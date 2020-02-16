@@ -1,26 +1,24 @@
 const express = require('express')
 const multer = require('multer')
+const cors = require('cors')
 const upload = multer({ dest: 'dest/' })
 
 const app = express()
+app.options('/fsubmit', cors())
 
-app.get('/', (req, resp, next) => {
+app.get('/', cors(), (req, resp, next) => {
     resp.send('hello nodejs')
 })
 
-app.post('/fsubmit', upload.single('file'), (req, resp) => {
-    console.log('form表单提交的请求不会报错跨域')
-    console.log(req.file)
+app.post('/fsubmit', cors(), upload.single('file'), (req, resp) => {
     resp.send(req.file.filename)
 })
-app.post('/asubmit', upload.single('file'), (req, resp) => {
-    console.log('ajax提交的会报错跨域')
-    console.log(req.file)
-    resp.setHeader('Access-Control-Allow-Origin', 'null')
+app.post('/asubmit', cors(), upload.single('file'), (req, resp) => {
+    // resp.setHeader('Access-Control-Allow-Origin', 'null')
     resp.send(req.file.filename)
 })
 
-app.get('/preview/:id', (req, resp) => {
+app.get('/preview/:id', cors(), (req, resp) => {
     let id = req.params.id
     console.log(id)
     resp.sendFile(`dest/${id}`, {
