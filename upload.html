@@ -1,0 +1,44 @@
+<html>
+
+<head>
+
+</head>
+<div>
+
+    <h2>用 form 表单提交文件</h2>
+    <form action="http://127.0.0.1:3000/fsubmit" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file"><br>
+        <input type="submit" value="submit">
+    </form>
+</div>
+<div>
+    <h2>用 ajax 提交文件</h2>
+    <form id='form'>
+        <input id="file" type="file" name="file"><br>
+        <input type="submit" value="submit"><br>
+        <img id="preview"></img>
+    </form>
+
+</div>
+
+<script>
+    let form = document.querySelector('#form')
+    let image = document.querySelector('#preview')
+    form.addEventListener('submit', (event) => {
+        event.preventDefault()
+        console.log('submit')
+        let formData = new FormData()
+        let file = document.querySelector('#file')
+        console.log(file.files[0])
+        formData.append('file', file.files[0])
+        let xhr = new XMLHttpRequest()
+        xhr.open('POST', 'http://127.0.0.1:3000/asubmit')
+        xhr.onload = () => {
+            console.log(xhr.response)
+            image.src = `http://127.0.0.1:3000/preview/${xhr.response}`
+        }
+        xhr.send(formData)
+    })
+</script>
+
+</html>
