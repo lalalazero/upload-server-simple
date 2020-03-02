@@ -4,34 +4,24 @@ const cors = require('cors')
 const upload = multer({ dest: 'dest/' })
 
 const app = express()
-app.options('/fsubmit', cors())
 
-app.get('/', cors(), (req, resp, next) => {
-    resp.send('hello nodejs')
+app.options('/asubmit', cors())
+app.post('/asubmit', cors(), upload.single('file'), function (req, res, next) {
+    res.json({ id: req.file.filename })
 })
-
-app.post('/fsubmit', cors(), upload.single('file'), (req, resp) => {
-    resp.send(req.file.filename)
-})
-app.post('/asubmit', cors(), upload.single('file'), (req, resp) => {
-    // resp.setHeader('Access-Control-Allow-Origin', 'null')
-    resp.send(req.file.filename)
-})
-
-app.get('/preview/:id', cors(), (req, resp) => {
-    let id = req.params.id
-    console.log(id)
-    resp.sendFile(`dest/${id}`, {
+app.get('/preview/:id', cors(), function (req, res, next) {
+    res.sendFile(`dest/${req.params.id}`, {
         root: __dirname,
         headers: {
-            'Content-Type': 'image/jpeg'
+            'Content-Type': 'image/jpeg',
+        },
+    }, (error) => {
+        if (error) {
+            res.status(404).send('Not found')
         }
-    }, err => {
-        resp.status(404).send('Not Found')
     })
 })
 
-
-var port = process.env.PORT || 3000
-console.log(`port=${port}`)
-app.listen(port)
+app.listen(3000, function () {
+    console.log('Example app listening on port 3000!')
+})
